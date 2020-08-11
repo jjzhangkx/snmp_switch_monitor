@@ -12,18 +12,18 @@ from pymongo import MongoClient
 from tornado.options import define, options
 
 define("port", default=9998, help="run on the given port", type=int)
-define("dbhost", default='192.168.43.116')
+define("dbhost", default='127.0.0.1')
 define("dbport", default=27017, help="run on the given port", type=int)
 
 
 def insertdb(info):
-    client = MongoClient('192.168.43.116', 27017)
+    client = MongoClient('127.0.0.1', 27017)
     monitor = client.switchlist
     monitorlog = monitor.switchlistlog
     monitorlog.insert(info)
 def deldb(ipaddr):
-    client1 = MongoClient('192.168.43.116', 27017)
-    client2 = MongoClient('192.168.43.116', 27017)
+    client1 = MongoClient('127.0.0.1', 27017)
+    client2 = MongoClient('127.0.0.1', 27017)
     monitor1 = client1.switchlist
     print monitor1
     monitor2= client2.monitor_huawei
