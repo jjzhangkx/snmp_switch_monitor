@@ -185,7 +185,7 @@ def getallinfo(ver, hostip, community):
 # ---------------------------------------------------------------------------------------
 # 入库
 def insertdb(info):
-    client = MongoClient('192.168.43.116', 27017)
+    client = MongoClient('127.0.0.1', 27017)
     monitor = client.monitor_huawei
     monitorlog = monitor.monitorlog_huawei
     monitorlog.insert(info)
