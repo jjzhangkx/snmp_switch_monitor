@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Server Monitor system</title>
+    <link rel="stylesheet" type="text/css" href="../static/css/bootstrap.css">
+   <script src="https://code.highcharts.com.cn/jquery/jquery-1.8.3.min.js"></script>
+        <script src="https://code.highcharts.com.cn/highstock/highstock.js"></script>
+        <script src="https://code.highcharts.com.cn/highcharts/modules/exporting.js"></script>
+        <script src="https://code.highcharts.com.cn/highcharts-plugins/highcharts-zh_CN.js"></script>
+    <script>
+        $.getJSON('https://data.jianshukeji.com/jsonp?filename=json/large-dataset.json&callback=?',function () {
+            $('#load').highcharts({
+                chart: {
+		            type: 'area'
+                },
+                title: {
+                    text: 'CPU负载',
+                    x: -20 //center
+                },
+                subtitle: {
+                    text: 'Server: {{ serverip }}',
+                    x: -20
+                },
+                xAxis: {
+                    {% autoescape None %}
+                    categories:{{categories}},
+                    max:20
+                },
+                scrollbar:{
+                    enabled: true
+                },
+
+                yAxis: {
+                    title: {
+                        text: 'CPU负载值'
+                    },
+                    plotLines: [{
+                        value: 0,
+                        width: 1,
+                        color: '#808080'
+                    }]
+                },
+                tooltip: {
+                    	split: true,
+		                valueSuffix: '%'
+                },
+                legend: {
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'middle',
+                    borderWidth: 0
+                },
+                credits: {
+                    enabled: false
+                },
+                series: [{
+                    name: '5秒钟',
+                    data: {{ fiveSecUsed }}
+                }, {
+                    name: '1分钟',
+                    data: {{ oneMinUsed }}
+                }, {
+                    name: '5分钟',
+                    data: {{ fiveMinUsed }}
+                }]
+            });
+        });
+    </script>
+
+    <script>
+        $(function () {
+            $('#memPer').highcharts({
+                 chart: {
+		            type: 'area'
+                },
+                title: {
+                    text: '内存使用率',
+                    x: -20 //center
+                },
+                subtitle: {
+                    text: 'Server: {{ serverip }}',
+                    x: -20
+                },
+                xAxis: {
+                    {% autoescape None %}
+                    categories:{{categories}},
+                    max:20
+                },
+                scrollbar:{
+                    enabled: true
+                },
+                yAxis: {
+                    title: {
+                        text: '内存使用率'
+                    },
+                    plotLines: [{
+                        value: 0,
+                        width: 1,
+                        color: '#808080'
+                    }]
+                },
+                tooltip: {
+                    	split: true,
+		                valueSuffix: '%'
+                },
+               legend: {
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'middle',
+                    borderWidth: 0
+                },
+               credits: {
+                    enabled: false
+                },
+                series: [{
+                    name: '内存使用率',
+                    data: {{ memTotalPer }}
+                }]
+            });
+        });
+    </script>
+    <!--延时-->
+        <script>
+        $(function () {
+            $('#delay').highcharts({
+                chart: {
+		            type: 'area'
+                },
+                title: {
+                    text: 'ping延时',
+                    x: -20 //center
+                },
+                subtitle: {
+                    text: 'Server: {{ serverip }}',
+                    x: -20
+                },
+                xAxis: {
+                    {% autoescape None %}
+                    categories:{{categories}},
+                    max:20
+                },
+                scrollbar:{
+                    enabled: true
+                },
+                yAxis: {
+                    title: {
+                        text: '延时ms'
+                    },
+                    plotLines: [{
+                        value: 0,
+                        width: 1,
+                        color: '#808080'
+                    }]
+                },
+                tooltip: {
+                    	split: true,
+		                valueSuffix: 'ms'
+                },
+                legend: {
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'middle',
+                    borderWidth: 0
+                },
+                credits: {
+                    enabled: false
+                },
+                series: [{
+                    name: '最大响应时间',
+                    data: {{ mrtt }}
+                }, {
+                    name: '平均响应时间',
+                    data: {{ artt }}
+                }]
+            });
+        });
+    </script>
+    <!--丢包-->
+        <script>
+        $(function () {
+            $('#lost').highcharts({
+                chart: {
+		            type: 'area'
+                },
+                title: {
+                    text: 'ping丢包',
+                    x: -20 //center
+                },
+                subtitle: {
+                    text: 'Server: {{ serverip }}',
+                    x: -20
+                },
+                xAxis: {
+                    {% autoescape None %}
+                    categories:{{categories}},
+                    max:20
+                },
+                scrollbar:{
+                    enabled: true
+                },
+                yAxis: {
+                    title: {
+                        text: '丢包情况'
+                    },
+                    plotLines: [{
+                        value: 0,
+                        width: 1,
+                        color: '#808080'
+                    }]
+                },
+              tooltip: {
+                    	split: true,
+		                valueSuffix: '%'
+                },
+                legend: {
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'middle',
+                    borderWidth: 0
+                },
+                credits: {
+                    enabled: false
+                },
+                series: [{
+                    name: '丢包情况',
+                    data: {{ package_lost }}
+                }]
+            });
+        });
+    </script>
+
+    <!-- 内存使用-->
+    <script>
+        $(function () {
+            $('#memory').highcharts({
+                chart: {
+		            type: 'area'
+                },
+                title: {
+                    text: '内存使用',
+                    x: -20 //center
+                },
+                subtitle: {
+                    text: 'Server: {{ serverip }}',
+                    x: -20
+                },
+                xAxis: {
+                    {% autoescape None %}
+				    categories:{{categories}},
+                    max:20
+                },
+                scrollbar:{
+                    enabled: true
+                },
+                yAxis: {
+                    title: {
+                        text: '内存使用'
+                    },
+                    plotLines: [{
+                        value: 0,
+                        width: 1,
+                        color: '#808080'
+                    }]
+                },
+                tooltip: {
+                    	split: true,
+		                valueSuffix: '字节'
+                },
+                legend: {
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'middle',
+                    borderWidth: 0
+                },
+                credits: {
+                    enabled: false
+                },
+                series: [{
+                    name: '总内存(M)',
+                    data: {{ memTotalReal }}
+                }, {
+                    name: '内存使用(M)',
+                    data: {{ memTotalUsed }}
+                }, {
+                    name: '剩余内存(M)',
+                    data: {{ memTotalFree }}
+                }]
+            });
+        });
+    </script>
+    <script src="../static/js/bootstrap.js"></script>
+
+
+</head>
+
+<body>
+
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+
+            </button>
+            <a class="brand" href="/">Server Monitor system</a>
+            <div class="nav-collapse collapse">
+                <ul class="nav">
+                    <li class="active"><a href="/">首页</a></li>
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row-fluid">
+        <div class="span4">...</div>
+        <div class="span8">...</div>
+    </div>
+    <table class="table table-striped">
+        <tr>
+            <td>
+        </tr>
+        <tr>
+            <td>
+        </tr>
+    </table>
+
+</div>
+<h4>{{ serverip }}</h4>
+
+<legend>CPU负载</legend>
+<div id="load" style="width:88%; height:300px;"></div>
+<legend>内存使用率</legend>
+<div id="memPer" style="width:88%; height:300px;"></div>
+<legend>内存使用情况</legend>
+<div id="memory" style="width:88%; height:300px;"></div>
+<legend>ping丢包情况</legend>
+<div id="lost" style="width:88%; height:300px;"></div>
+<!-- /container -->
+<legend>ping延时时间</legend>
+<div id="delay" style="width:88%; height:300px;"></div>
+<legend>端口情况</legend>
+<div id="port" ></div>
+{#{% for i in range(len(ifcard)) %}#}
+    <script>
+        var datain={{ list_in }}
+        var dataout={{ list_out }}
+        var cardname={{ ifcard }}
+        $(function () {
+            for(var temp in datain){
+                console.log(temp)
+                var div=$('<div style="width:88% ;height:300px;"></div>')
+                $('#port').append(div);
+                div.highcharts({
+                    chart: {
+		            type: 'area'
+                },
+                    title: {
+                        text: cardname[temp],
+                        x: -20 //center
+                    },
+                    subtitle: {
+                        text: 'Server: {{ serverip }}',
+                        x: -20
+                    },
+                    xAxis: {
+                        {% autoescape None %}
+
+                        {#type:'datetime',#}
+                        categories:{{categories}},
+                        max:20
+                    },
+                    scrollbar:{
+                        enabled: true
+                    },
+                    yAxis: {
+                        title: {
+                            text: '时间段内平均速率 M/S'
+                        },
+                        plotLines: [{
+                            value: 0,
+                            width: 1,
+                            color: '#808080'
+                        }]
+                    },
+                    tooltip: {
+                    	split: true,
+		                valueSuffix: 'M/S'
+                    },
+                    legend: {
+                        layout: 'vertical',
+                        align: 'right',
+                        verticalAlign: 'middle',
+                        borderWidth: 0
+                    },
+                    credits: {
+                        enabled: false
+                    },
+                    series: [{
+                        name: '进流量',
+                        data: datain[temp]
+                    }, {
+                        name: '出流量',
+                        data: dataout[temp]
+                    }]
+                }
+            )};
+        });
+    </script>
+{#    <legend>{{ ifcard[i] }}</legend>#}
+{#{% end %}#}
+{#<script>#}
+{##}
+{#    $(function () {#}
+{#        var ports = '{{ ifcard }}';#}
+{#        var len = ports.length;#}
+{#        var listIn = '{{ list_in }}';#}
+{#        var listOut = '{{ list_out }}';#}
+{#        console.log(typeof(len));#}
+{#        console.log(typeof(listIn));#}
+{#        console.log(typeof(listOut));#}
+{#        console.log(typeof(ports));#}
+{#        for(var i = 1; i <= len; i++){#}
+{#            myPlot(ports[i], listIn[i], listOut[i]);#}
+{#        }#}
+{#    })#}
+{##}
+{#    function myPlot(port, listIn, listOut) {#}
+{#            var cellId = 'id' + port;#}
+            {#console.log(cellId);#}
+{#            var cell = '<div id="' + cellId + '">hahaahhhaah</div>';#}
+            {#alert(cell);#}
+{#            $('#area').append(cell);#}
+{#            $('#cellId').highcharts({#}
+{##}
+{#                title: {#}
+{#                    text: port,#}
+{#                    x: -20 //center#}
+{#                },#}
+{#                subtitle: {#}
+{#                    text: 'Server: {{ serverip }}',#}
+{#                    x: -20#}
+{#                },#}
+{#                xAxis: {#}
+{#                    {% autoescape None %}#}
+{#                    categories:{{categories}}#}
+{#                },#}
+{#                yAxis: {#}
+{#                    title: {#}
+{#                        text: '延时ms'#}
+{#                    },#}
+{#                    plotLines: [{#}
+{#                        value: 0,#}
+{#                        width: 1,#}
+{#                        color: '#808080'#}
+{#                    }]#}
+{#                },#}
+{#                tooltip: {#}
+{#                    valueSuffix: ''#}
+{#                },#}
+{#                legend: {#}
+{#                    layout: 'vertical',#}
+{#                    align: 'right',#}
+{#                    verticalAlign: 'middle',#}
+{#                    borderWidth: 0#}
+{#                },#}
+{#                series: [{#}
+{#                    name: '进流量',#}
+{#                    data: listIn#}
+{#                }, {#}
+{#                    name: '出流量',#}
+{#                    data: listOut#}
+{#                }]#}
+{#            });#}
+{#        }#}
+{#</script>#}
+<div id="area" style="width:88%; height:300px;"></div>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>交换机列表</title>
+</head>
+<body>
+<table border="0" cellpadding="0">
+    <tr>
+<!--        <th>编号</th>-->
+        <th>IP地址</th>
+        <th>团体名</th>
+    </tr>
+    {% for switch in server_info %}
+    <tr>
+        <th>{{switch['ipaddr'] }}</th>
+        <th>{{switch['community'] }}</th>
+        <th><a href="/del/{{ switch.get("ipaddr") }}" type="button">删除</a></th>
+    </tr>
+    {% end %}
+</table>
+</body>
+</html>
