@@ -2,12 +2,6 @@
 # cofing:utf-8
 import netsnmp
 
-sess = netsnmp.Session(Version=3,
-                       DestHost='localhost',
-                       SecLevel='authPriv',
-                       SecName='snmpuser',
-                       PrivPass='passworddes',
-                       AuthPass='password')
 
 vars = netsnmp.VarList(netsnmp.Varbind('sysUpTime'),
                        netsnmp.Varbind('sysORLastChange'),
